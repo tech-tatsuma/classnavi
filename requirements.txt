@@ -1,0 +1,11 @@
+fugashi[unidic-lite]
+transformers
+torch
+pandas
+protobuf
+pulp
+ipadic
+colorama
+tabulate
+matplotlib
+japanize-matplotlib
