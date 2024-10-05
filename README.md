@@ -8,3 +8,7 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+## ToDo
+- [ ] 必修科目の制約
+- [ ] 開講学期の制約
+- [ ] シラバスからデータの作成
