@@ -56,6 +56,10 @@ def optimize_classes(alpha_values, data_path='data.csv', L_early=0, min_units=1,
                     for j in indices:
                         if i != j:
                             problem += x_vars[i] + x_vars[j] <= 1
+
+    # **追加された制約条件: '必修'科目は必ず選択する**
+    for i in df[df['unitclass'] == '必修'].index:
+        problem += x_vars[i] == 1, f"RequiredClass_{i}"
     
     # 制約条件: 最低単位数と最大単位数の制約を追加
     total_units = pulp.lpSum(df.loc[i, 'numofunits'] * x_vars[i] for i in df.index)
@@ -72,7 +76,12 @@ def optimize_classes(alpha_values, data_path='data.csv', L_early=0, min_units=1,
     
     # 最適化問題のステータスを確認し、適切なメッセージを出力
     if pulp.LpStatus[status] == 'Infeasible':
-        return "制約が厳しすぎます。授業の選択が不可能です。"
+        # infeasible になった場合、必修科目のみ選択して結果を返す
+        required_classes = df[df['unitclass'] == '必修']
+        return json.dumps({
+            "message": "制約が厳しすぎます。必修科目のみ選択されました。",
+            "selected_classes": required_classes.to_dict(orient='records')
+        }, ensure_ascii=False)
     elif pulp.LpStatus[status] == 'Optimal':
         result = df[df.index.isin([i for i in df.index if x_vars[i].value() == 1])].to_dict(orient='records')
         return json.dumps(result, ensure_ascii=False)
