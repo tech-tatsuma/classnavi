@@ -9,3 +9,4 @@ colorama
 tabulate
 matplotlib
 japanize-matplotlib
+pypdf
